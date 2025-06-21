@@ -9,7 +9,7 @@
 
 Designed for backend applications written in modern C++, Remo provides clear interfaces and is built on top of **Boost.Beast** for robust HTTP and WebSocket communication.
 
-Started as a [Vibe Coding experiment](https://en.wikipedia.org/wiki/Vibe_coding) 🙂.
+Started as a ["Vibe Coding"](https://en.wikipedia.org/wiki/Vibe_coding) experiment 🙂.
 
 ---
 
