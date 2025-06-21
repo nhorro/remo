@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Remo JavaScript Client</title>
+</head>
+<body>
+  <h1>Remo JS Client Example</h1>
+  <script type="module">
+    import { RemoRPCClient, RemoWebSocketSubscriber } from './remo_client.js';
+
+    const rpc = new RemoRPCClient();
+    const ws = new RemoWebSocketSubscriber();
+
+    async function run() {
+      try {
+        const result = await rpc.call("hello", ["Alice"]);
+        console.log("RPC response:", result);
+      } catch (err) {
+        console.error("RPC error:", err);
+      }
+
+      ws.connect((data) => {
+        console.log("WebSocket data:", data);
+      });
+    }
+
+    run();
+  </script>
+</body>
+</html>

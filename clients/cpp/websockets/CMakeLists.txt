@@ -1,16 +1,22 @@
 cmake_minimum_required(VERSION 3.10)
-project(remo)
+project(json_ws_client)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --- GLOBAL DEPENDENCIES ---
-
-# Boost
 find_package(Boost REQUIRED COMPONENTS system thread)
 include_directories(${Boost_INCLUDE_DIRS})
 
-# nlohmann/json (via FetchContent)
+add_executable(json_ws_client
+    main.cpp
+    json_ws_client.cpp
+)
+
+target_link_libraries(json_ws_client
+    Boost::system
+    Boost::thread
+)
+
 include(FetchContent)
 FetchContent_Declare(
   json
@@ -18,8 +24,4 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-# --- SUBDIRECTORIES ---
-
-add_subdirectory(lib)
-add_subdirectory(examples)
-add_subdirectory(clients)
+target_link_libraries(json_ws_client nlohmann_json::nlohmann_json)
