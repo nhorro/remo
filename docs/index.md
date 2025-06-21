@@ -26,8 +26,7 @@ remo/
 ├── lib/                # Library code
 │   ├── rpc/            # RPC backend (HTTP + JSON-RPC 2.0)
 │   └── websocket/      # WebSocket publisher
-├── examples/           # Usage examples
-└── guides/             # Documentation in Markdown
+└── examples/           # Usage examples
 
 ```
 

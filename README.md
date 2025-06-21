@@ -67,8 +67,6 @@ examples/
  ├── rpc_application/       # Working RPC example
  └── publisher_application/ # Working WebSocket publishing example
 
-doc/
- └── logo.png
 ```
 
 ---
