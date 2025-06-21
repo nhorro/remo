@@ -1,4 +1,3 @@
-Perfecto. Para integrar ambas guías en la documentación de GitHub Pages con estilo claro y navegable, actualizá tu `index.md` con una sección “Getting Started” y enlaces a las guías. Aquí tenés el contenido sugerido para `index.md`:
 ![logo](logo.png)
 
 Remo is a lightweight C++ library for building backend applications with:
