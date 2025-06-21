@@ -1,6 +1,6 @@
 # Remo
 
-![logo](./doc/logo.png)
+![logo](./docs/logo.png)
 
 **Remo** is a modular C++ library for building modern backend components that offer:
 
