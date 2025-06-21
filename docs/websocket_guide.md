@@ -1,35 +1,39 @@
-Simple Websocket application example
-====================================
+# WebSocket Publisher Example
 
-The [example publisher application](../examples/publisher_application/) shows how to publish any data structure using Remo websockets.
+The [example publisher application](../examples/publisher_application/) shows how to broadcast structured data to multiple clients using **Remo's WebSocket publisher**.
 
-## Data model
+---
 
-The only requirement for any data type to be published is that it is JSON serializable. If it is not a primitive type, like in the following example:
+## 🧩 Data Model
 
-~~~c++
+Any data published must be **JSON-serializable**.
+
+If your structure contains custom types, you must define `to_json()` converters using [nlohmann::json](https://github.com/nlohmann/json):
+
+```cpp
 struct CustomDataStructure {
     struct Point {
         float x, y, z;
     };
     std::vector<Point> points;
 };
-~~~
 
-Custom serializers should be provided:
-
-~~~c++
 inline void to_json(nlohmann::json& j, const CustomDataStructure::Point& p) {
     j = { {"x", p.x}, {"y", p.y}, {"z", p.z} };
 }
+
 inline void to_json(nlohmann::json& j, const CustomDataStructure& d) {
     j = { {"points", d.points} };
 }
-~~~
+````
 
-Then a publisher object can be called from any thread:
+---
 
-~~~c++
+## 🚀 Publisher Application
+
+The publisher can be used from any thread. Here's a minimal working example:
+
+```cpp
 #include "beast_websocket_publisher.hpp"
 #include <iostream>
 #include <thread>
@@ -44,156 +48,106 @@ int main() {
     std::thread worker([&]() {
         float i = 0.0f;
         while (running) {
-            
             CustomDataStructure data = {
-                { 
-                    {i, 2.0f, 3.0f}, 
-                    {4.0f, i, 6.0f} }
+                { {i, 2.0f, 3.0f}, {4.0f, i, 6.0f} }
             };
             publisher.publish(nlohmann::json(data));
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            i = i + 1.0f;
+            i += 1.0f;
         }
     });
 
-    std::cout << "Press Enter to stop..." << std::endl;
+    std::cout << "Press Enter to stop...\n";
     std::cin.get();
 
     running = false;
     worker.join();
     publisher.stop();
 }
-~~~
+```
 
-## Basic HTML application to test communication
+---
 
-Connec
+## 🌐 Testing with a Web Browser
 
-~~~html
+You can test your publisher with a minimal HTML+JavaScript client.
+
+Save this as `client.html` and open it in your browser:
+
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Remo WebSocket Client</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f8f8f8;
-      padding: 1em;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .status {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-left: 10px;
-      background: gray;
-    }
-
-    #output {
-      margin-top: 1em;
-      padding: 1em;
-      background: #fff;
-      border: 1px solid #ccc;
-      min-height: 100px;
-      white-space: pre-wrap;
-      font-family: monospace;
-    }
-
-    input[type="text"] {
-      width: 10em;
-    }
-
-    button {
-      margin-left: 0.5em;
-    }
+    body { font-family: sans-serif; padding: 1em; background: #f8f8f8; max-width: 600px; margin: auto; }
+    .status { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-left: 10px; background: gray; }
+    #output { margin-top: 1em; padding: 1em; background: #fff; border: 1px solid #ccc; min-height: 100px; white-space: pre-wrap; font-family: monospace; }
   </style>
 </head>
 <body>
 
-  <h2>Remo WebSocket Client</h2>
+<h2>Remo WebSocket Client</h2>
 
-  <div>
-    <label>Host:</label>
-    <input type="text" id="host" value="localhost">
-    <label>Port:</label>
-    <input type="text" id="port" value="8081">
-    <button id="connectBtn" onclick="toggleConnection()">Connect</button>
-    <span class="status" id="statusLed"></span>
-  </div>
+<div>
+  <label>Host:</label>
+  <input type="text" id="host" value="localhost">
+  <label>Port:</label>
+  <input type="text" id="port" value="8081">
+  <button id="connectBtn" onclick="toggleConnection()">Connect</button>
+  <span class="status" id="statusLed"></span>
+</div>
 
-  <div id="output">(no data)</div>
+<div id="output">(no data)</div>
 
-  <script>
-    let ws = null;
+<script>
+let ws = null;
 
-    function setStatus(connected) {
-      const led = document.getElementById("statusLed");
-      const btn = document.getElementById("connectBtn");
-      led.style.background = connected ? "green" : "gray";
-      btn.textContent = connected ? "Disconnect" : "Connect";
+function setStatus(connected) {
+  document.getElementById("statusLed").style.background = connected ? "green" : "gray";
+  document.getElementById("connectBtn").textContent = connected ? "Disconnect" : "Connect";
+}
+
+function toggleConnection() {
+  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+    ws.onclose = () => { setStatus(false); ws = null; };
+    ws.close();
+    setTimeout(() => { if (ws && ws.readyState !== WebSocket.OPEN) { setStatus(false); ws = null; } }, 1000);
+    return;
+  }
+
+  const url = `ws://${document.getElementById("host").value}:${document.getElementById("port").value}`;
+  ws = new WebSocket(url);
+
+  ws.onopen = () => { setStatus(true); };
+  ws.onmessage = (event) => {
+    const output = document.getElementById("output");
+    try {
+      output.textContent = JSON.stringify(JSON.parse(event.data), null, 2);
+    } catch {
+      output.textContent = event.data;
     }
-  
-    function toggleConnection() {
-      // If connected, close connection
-      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-        console.log("Closing WebSocket...");
-        ws.onclose = () => {
-          console.log("WebSocket closed");
-          setStatus(false);
-          ws = null;
-        };
-        ws.close();
-    
-        // fallback si onclose no se llama (máx. 1s)
-        setTimeout(() => {
-          if (ws && ws.readyState !== WebSocket.OPEN) {
-            console.log("Force cleanup");
-            setStatus(false);
-            ws = null;
-          }
-        }, 1000);
-    
-        return;
-      }
-  
-      // Start a new connection
-      const host = document.getElementById("host").value;
-      const port = document.getElementById("port").value;
-      const url = `ws://${host}:${port}`;
-  
-      ws = new WebSocket(url);
-  
-      ws.onopen = () => {
-        setStatus(true);
-        console.log("Connected to", url);
-      };
-  
-      ws.onmessage = (event) => {
-        const output = document.getElementById("output");
-        try {
-          const json = JSON.parse(event.data);
-          output.textContent = JSON.stringify(json, null, 2);
-        } catch (e) {
-          output.textContent = event.data;
-        }
-      };
-  
-      ws.onerror = (err) => {
-        console.error("WebSocket error:", err);
-      };
-  
-      ws.onclose = () => {
-        setStatus(false);
-        console.log("WebSocket closed");
-      };
-    }
-  
-    setStatus(false);
-  </script>
+  };
+  ws.onerror = (err) => console.error("WebSocket error:", err);
+  ws.onclose = () => { setStatus(false); };
+}
+
+setStatus(false);
+</script>
+
 </body>
 </html>
-~~~
+```
+
+---
+
+## ✅ Summary
+
+* Data can be streamed using a single publisher object across threads.
+* Clients can connect and receive live updates in JSON format.
+* No polling or request handling is needed—it's push-based.
+
+Remo's WebSocket interface is ideal for **live dashboards**, **event streams**, or **data monitoring applications**.
+
+```
