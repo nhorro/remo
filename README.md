@@ -2,34 +2,34 @@
 
 ![logo](./doc/logo.png)
 
-**Remo** es una biblioteca en C++ para construir backends que ofrecen:
+**Remo** is a C++ library for building backends that provide:
 
-- Llamadas a procedimientos remotos (RPC) sobre HTTP utilizando el estándar **JSON-RPC 2.0**.
-- Publicación de datos y eventos a través de **WebSockets**.
+- Remote Procedure Calls (RPC) over HTTP using the **JSON-RPC 2.0** standard.
+- Data and event publishing via **WebSockets**.
 
-Está diseñada para ser simple de integrar en aplicaciones backend escritas en C++, con una interfaz flexible y clara. Remo utiliza **Boost.Beast** como base para la comunicación HTTP/WebSocket.
-
----
-
-## ✨ Características
-
-- 📡 **RPC HTTP** con soporte para tipos primitivos y objetos compuestos.
-- 📤 **Publicación WebSocket** para clientes suscritos.
-- 🔧 API flexible basada en `std::function` para registrar handlers.
-- 🚦 Soporte para errores y respuestas JSON-RPC 2.0 válidas.
-- 💻 Ejemplos de uso incluidos.
+It is designed to be simple to integrate into C++ backend applications, with a clear and flexible interface. Remo uses **Boost.Beast** as the foundation for HTTP/WebSocket communication.
 
 ---
 
-## 📦 Dependencias
+## ✨ Features
+
+- 📡 **HTTP RPC** with support for primitive types and composite objects.
+- 📤 **WebSocket publishing** for subscribed clients.
+- 🔧 Flexible API based on `std::function` for handler registration.
+- 🚦 Full support for errors and valid JSON-RPC 2.0 responses.
+- 💻 Usage examples included.
+
+---
+
+## 📦 Dependencies
 
 - C++17
-- [Boost](https://www.boost.org/) (componentes `system`, `thread`, `asio`, `beast`)
-- [nlohmann/json](https://github.com/nlohmann/json) (incluido vía `FetchContent`)
+- [Boost](https://www.boost.org/) (`system`, `thread`, `asio`, `beast` components)
+- [nlohmann/json](https://github.com/nlohmann/json) (included via `FetchContent`)
 
 ---
 
-## 🧪 Ejemplo de uso
+## 🧪 Usage example
 
 ```cpp
 BeastRPCServer server(8080);
@@ -44,38 +44,38 @@ server.start();
 
 ---
 
-## 📁 Estructura del proyecto
+## 📁 Project structure
 
 ```
 lib/
- ├── rpc/           # Servidor RPC con Boost.Beast
- └── websocket/     # Publicador WebSocket (en desarrollo)
+ ├── rpc/              # RPC server using Boost.Beast
+ └── websocket/        # WebSocket publisher (in development)
 
 examples/
- ├── rpc_application/  # Ejemplo completo de uso con JSON-RPC
- └── websocket_example/ (pendiente)
+ ├── rpc_application/  # Full example using JSON-RPC
+ └── websocket_example/ (planned)
 ```
 
 ---
 
-## 🚀 Próximos pasos
+## 🚀 Roadmap
 
-* [ ] WebSocket publisher (en progreso)
-* [ ] Sistema de suscripciones
-* [ ] Integración con Catch2 para tests automatizados
-* [ ] Instalación vía `make install`
+* [ ] WebSocket publisher (in progress)
+* [ ] Subscription system
+* [ ] Catch2 integration for automated testing
+* [ ] Installation via `make install`
 
 ---
 
-## ⚖️ Licencia
+## ⚖️ License
 
 MIT
 
 ---
 
-## 🙌 Agradecimientos
+## 🙌 Acknowledgments
 
-Este proyecto utiliza:
+This project uses:
 
 * [Boost.Beast](https://www.boost.org/doc/libs/release/libs/beast/)
 * [nlohmann/json](https://github.com/nlohmann/json)
