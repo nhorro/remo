@@ -1,13 +1,9 @@
-/**
- * @file main.cpp
- * @author Nicolás Horro (nhorro@gmail.com)
- * @brief Example of how to adapt an existing RPC application to Remo RPC  
- */
+Simple RPC application example
+==============================
 
-#include "beast_rpc_server.hpp"
-#include <iostream>
-#include <nlohmann/json.hpp>
+This example shows how to adapt to Remo an existing RPC application like the following:
 
+~~~c++
 /**
  * @brief Example of a protocol-independent remote controlled application
  * 
@@ -42,11 +38,19 @@ public:
         throw std::runtime_error("Computation failed: something went wrong.");
     }
 };
+~~~
 
+Note that:
 
-// JSON converters are required for custom types
+1. It might have simple RPC methods that return primitive types.
+2. It might also have methods that use custom data types.
+3. It might have methods that throw exceptions.
 
+The three cases are supported by Remo.
 
+Custom types are handled with the addition of JSON converters:
+
+~~~c++
 inline void to_json(nlohmann::json& j, const RPCApplication::CompositeResult::Point& p) {
     j = nlohmann::json{
         {"x", p.x},
@@ -59,9 +63,14 @@ inline void to_json(nlohmann::json& j, const RPCApplication::CompositeResult& r)
     j = nlohmann::json{
         {"points", r.points}
     };
-}    
+} 
+~~~
 
+And exceptions are handled internally and returned as a JSON RPC error.
 
+So, binding existing RPC methods to Remo is quite straightforward:
+
+~~~c++
 void bind_methods(BeastRPCServer& server, RPCApplication& app) {
 
     server.register_method("hello", [&app](const nlohmann::json& params) {
@@ -81,8 +90,11 @@ void bind_methods(BeastRPCServer& server, RPCApplication& app) {
         return app.this_method_always_fails(x);  // Throws exception
     });
 }
+~~~
 
+The server runs in a separate thread, and can be started and stopped at any time:
 
+~~~c++
 constexpr int RPC_PORT = 8080;
 
 int main() {
@@ -102,3 +114,14 @@ int main() {
     std::cout << "Gracefully returning to system.\n";
     return 0;
 }
+~~~
+
+## Quick test
+
+Example CURL commands to test:
+
+~~~bash
+curl -X POST http://localhost:8080/rpc -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0", "method":"hello", "params":["bob"], "id":1}'
+curl -X POST http://localhost:8080/rpc -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0", "method":"get_points", "params":[], "id":1}'
+curl -X POST http://localhost:8080/rpc -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0", "method":"fail", "params":[3.14], "id":99}'
+~~~

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Remo WebSocket Client</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f8f8f8;
+      padding: 1em;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .status {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 10px;
+      background: gray;
+    }
+
+    #output {
+      margin-top: 1em;
+      padding: 1em;
+      background: #fff;
+      border: 1px solid #ccc;
+      min-height: 100px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    input[type="text"] {
+      width: 10em;
+    }
+
+    button {
+      margin-left: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Remo WebSocket Client</h2>
+
+  <div>
+    <label>Host:</label>
+    <input type="text" id="host" value="localhost">
+    <label>Port:</label>
+    <input type="text" id="port" value="8081">
+    <button id="connectBtn" onclick="toggleConnection()">Connect</button>
+    <span class="status" id="statusLed"></span>
+  </div>
+
+  <div id="output">(no data)</div>
+
+  <script>
+    let ws = null;
+
+    function setStatus(connected) {
+      const led = document.getElementById("statusLed");
+      const btn = document.getElementById("connectBtn");
+      led.style.background = connected ? "green" : "gray";
+      btn.textContent = connected ? "Disconnect" : "Connect";
+    }
+  
+    function toggleConnection() {
+      // If connected, close connection
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        console.log("Closing WebSocket...");
+        ws.onclose = () => {
+          console.log("WebSocket closed");
+          setStatus(false);
+          ws = null;
+        };
+        ws.close();
+    
+        // fallback si onclose no se llama (máx. 1s)
+        setTimeout(() => {
+          if (ws && ws.readyState !== WebSocket.OPEN) {
+            console.log("Force cleanup");
+            setStatus(false);
+            ws = null;
+          }
+        }, 1000);
+    
+        return;
+      }
+  
+      // Start a new connection
+      const host = document.getElementById("host").value;
+      const port = document.getElementById("port").value;
+      const url = `ws://${host}:${port}`;
+  
+      ws = new WebSocket(url);
+  
+      ws.onopen = () => {
+        setStatus(true);
+        console.log("Connected to", url);
+      };
+  
+      ws.onmessage = (event) => {
+        const output = document.getElementById("output");
+        try {
+          const json = JSON.parse(event.data);
+          output.textContent = JSON.stringify(json, null, 2);
+        } catch (e) {
+          output.textContent = event.data;
+        }
+      };
+  
+      ws.onerror = (err) => {
+        console.error("WebSocket error:", err);
+      };
+  
+      ws.onclose = () => {
+        setStatus(false);
+        console.log("WebSocket closed");
+      };
+    }
+  
+    setStatus(false);
+  </script>
+</body>
+</html>

@@ -2,34 +2,36 @@
 
 ![logo](./doc/logo.png)
 
-**Remo** is a C++ library for building backends that provide:
+**Remo** is a modular C++ library for building modern backend components that offer:
 
-- Remote Procedure Calls (RPC) over HTTP using the **JSON-RPC 2.0** standard.
-- Data and event publishing via **WebSockets**.
+* Remote Procedure Calls (**RPC**) over HTTP using the **JSON-RPC 2.0** protocol.
+* Real-time data and event publishing over **WebSockets**.
 
-It is designed to be simple to integrate into C++ backend applications, with a clear and flexible interface. Remo uses **Boost.Beast** as the foundation for HTTP/WebSocket communication.
+Designed for backend applications written in modern C++, Remo provides clear interfaces and is built on top of **Boost.Beast** for robust HTTP and WebSocket communication.
 
 ---
 
 ## ✨ Features
 
-- 📡 **HTTP RPC** with support for primitive types and composite objects.
-- 📤 **WebSocket publishing** for subscribed clients.
-- 🔧 Flexible API based on `std::function` for handler registration.
-- 🚦 Full support for errors and valid JSON-RPC 2.0 responses.
-- 💻 Usage examples included.
+* 📡 **JSON-RPC 2.0 over HTTP** with support for primitive and structured types.
+* 📤 **Generic WebSocket broadcasting** for JSON-serializable data.
+* 🔧 Easy-to-use APIs with `std::function`-based handler registration.
+* 🚦 Robust error handling and compliant JSON-RPC 2.0 responses.
+* 💻 Clean example applications for both RPC and WebSocket components.
 
 ---
 
 ## 📦 Dependencies
 
-- C++17
-- [Boost](https://www.boost.org/) (`system`, `thread`, `asio`, `beast` components)
-- [nlohmann/json](https://github.com/nlohmann/json) (included via `FetchContent`)
+* **C++17**
+* [Boost](https://www.boost.org/) (`system`, `thread`, `asio`, `beast`)
+* [nlohmann/json](https://github.com/nlohmann/json) (included via `FetchContent`)
 
 ---
 
-## 🧪 Usage example
+## 🧪 Examples
+
+### RPC server
 
 ```cpp
 BeastRPCServer server(8080);
@@ -40,7 +42,17 @@ server.register_method("hello", [](const json& params) {
 });
 
 server.start();
-````
+```
+
+### WebSocket publisher
+
+```cpp
+BeastWebSocketPublisher publisher(8081);
+publisher.start();
+
+// In a separate thread or periodic task
+publisher.publish({{"status", "ok"}, {"temperature", 42.5}});
+```
 
 ---
 
@@ -48,22 +60,25 @@ server.start();
 
 ```
 lib/
- ├── rpc/              # RPC server using Boost.Beast
- └── websocket/        # WebSocket publisher (in development)
+ ├── rpc/             # JSON-RPC over HTTP server (remorpc target)
+ └── websocket/       # WebSocket publisher (remowebsockets target)
 
 examples/
- ├── rpc_application/  # Full example using JSON-RPC
- └── websocket_example/ (planned)
+ ├── rpc_application/       # Working RPC example
+ └── publisher_application/ # Working WebSocket publishing example
+
+doc/
+ └── logo.png
 ```
 
 ---
 
 ## 🚀 Roadmap
 
-* [ ] WebSocket publisher (in progress)
-* [ ] Subscription system
-* [ ] Catch2 integration for automated testing
-* [ ] Installation via `make install`
+* ✅ WebSocket broadcasting for generic JSON data
+* ⏳ Topic-based subscription mechanism
+* ⏳ Catch2 integration for testing
+* ⏳ Packaging and installation support
 
 ---
 

@@ -1,1 +1,2 @@
 add_subdirectory(rpc_application)
+add_subdirectory(publisher_application)

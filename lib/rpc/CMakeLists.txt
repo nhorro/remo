@@ -1,14 +1,8 @@
-find_package(Boost REQUIRED COMPONENTS system thread)
-include_directories(${Boost_INCLUDE_DIRS})
-
-add_library(rpc
-    beast_rpc_server.cpp
+add_library(remo-rpc)
+target_sources(remo-rpc PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/beast_rpc_server.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/beast_rpc_server.hpp
 )
-
-target_include_directories(rpc PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(rpc
-    Boost::system
-    Boost::thread
-    pthread
-)
+target_link_libraries(remo-rpc PRIVATE Boost::system nlohmann_json)
+target_include_directories(remo-rpc PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
