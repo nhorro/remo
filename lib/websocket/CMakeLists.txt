@@ -1,4 +1,5 @@
 add_library(remo-websockets)
+add_library(Remo::remo-websockets ALIAS remo-websockets)
 target_sources(remo-websockets PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/beast_websocket_publisher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/beast_websocket_publisher.hpp
@@ -11,6 +12,7 @@ target_include_directories(remo-websockets
 )
 
 install(TARGETS remo-websockets
+    EXPORT RemoTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )

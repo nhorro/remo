@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
-project(json_ws_client)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(json_ws_client CXX)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
-include_directories(${Boost_INCLUDE_DIRS})
+find_package(nlohmann_json REQUIRED)
+
+find_package(Boost REQUIRED COMPONENTS system thread)
 
 add_executable(json_ws_client
     main.cpp
@@ -13,15 +12,7 @@ add_executable(json_ws_client
 )
 
 target_link_libraries(json_ws_client
+    nlohmann_json::nlohmann_json
     Boost::system
     Boost::thread
 )
-
-include(FetchContent)
-FetchContent_Declare(
-  json
-  URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
-)
-FetchContent_MakeAvailable(json)
-
-target_link_libraries(json_ws_client nlohmann_json::nlohmann_json)
