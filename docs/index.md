@@ -13,8 +13,9 @@ Built on top of **Boost.Beast** and **nlohmann/json**, Remo aims for simplicity,
 
 Here are minimal working examples to get you started with Remo:
 
-- 👉 [RPC Server Example](./guides/rpc.md): bind existing C++ methods and expose them over JSON-RPC 2.0.
-- 👉 [WebSocket Publisher Example](./guides/websocket.md): stream custom data to connected clients in real time.
+- 👉 [RPC Server Example](./rpc_guide.md): bind existing C++ methods and expose them over JSON-RPC 2.0.
+- 👉 [WebSocket Publisher Example](./websocket_guide.md): stream custom data to connected clients in real time.
+- 📦 [Build & Install Guide](./build_and_install.md): compile the library and generate a package using CMake/CPack.
 
 ---
 

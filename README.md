@@ -73,12 +73,19 @@ examples/
 
 ---
 
+## 🛠️ Build & Install
+
+Detailed steps for building the library and creating a distributable package are provided in
+[docs/build_and_install.md](docs/build_and_install.md).
+
+---
+
 ## 🚀 Roadmap
 
 * ✅ WebSocket broadcasting for generic JSON data
 * ⏳ Topic-based subscription mechanism
 * ⏳ Catch2 integration for testing
-* ⏳ Packaging and installation support
+* ✅ Packaging and installation support
 
 ---
 
