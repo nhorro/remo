@@ -44,3 +44,6 @@ add_executable(my_app main.cpp)
 target_link_libraries(my_app PRIVATE Remo::remo-rpc Remo::remo-websockets)
 ```
 
+If you installed Remo to a custom prefix, remember to add the install location to
+`CMAKE_PREFIX_PATH` or set the `Remo_DIR` variable when configuring your project.
+

@@ -1,4 +1,5 @@
 add_library(remo-rpc)
+add_library(Remo::remo-rpc ALIAS remo-rpc)
 target_sources(remo-rpc PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/beast_rpc_server.cpp
     ${CMAKE_CURRENT_LIST_DIR}/beast_rpc_server.hpp
@@ -11,6 +12,7 @@ target_include_directories(remo-rpc
 )
 
 install(TARGETS remo-rpc
+    EXPORT RemoTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
