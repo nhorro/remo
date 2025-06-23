@@ -66,7 +66,18 @@ void BeastRPCServer::handle_connection(boost::asio::ip::tcp::socket socket) {
         res.version(req.version());
         res.keep_alive(false);
         res.set(http::field::content_type, "application/json");
+        res.set(http::field::access_control_allow_origin, "*");
 
+        if (req.method() == http::verb::options) {
+            http::response<http::string_body> res{http::status::no_content, req.version()};
+            res.set(http::field::access_control_allow_origin, "*");
+            res.set(http::field::access_control_allow_methods, "POST, GET, OPTIONS");
+            res.set(http::field::access_control_allow_headers, "Content-Type");
+            res.prepare_payload();
+            http::write(socket, res);
+            return;
+        }
+        
         if (req.method() == http::verb::post && req.target() == "/rpc") {
             auto body = json::parse(req.body(), nullptr, false);
             json reply;
